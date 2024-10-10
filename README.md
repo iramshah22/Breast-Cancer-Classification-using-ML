@@ -1,33 +1,100 @@
-# Breast-Cancer-Classification-using-ML
-This project focuses on building a machine learning model to classify whether a tumor is malignant or benign based on the characteristics of cell nuclei present in a breast cancer dataset. Using a logistic regression model, we aim to predict the type of cancer from the provided features and assess the accuracy of our predictions.
-**Dataset**
-The dataset used in this project is the Breast Cancer Wisconsin (Diagnostic) dataset, available in the sklearn library. It contains 569 instances and 30 features, which describe the characteristics of the cell nuclei computed from digitized images of a fine needle aspirate (FNA) of a breast mass. The target variable is binary, indicating whether the tumor is malignant (1) or benign (0).
+# Importing the Dependencies
 
-**Features**
-The dataset includes the following features:
--Mean radius
--Mean texture
--Mean perimeter
--Mean area
--Mean smoothness
-And 25 additional attributes related to the cell nuclei.
-**Process**
-1. Data Collection: The dataset is loaded using the sklearn.datasets module.
-2. Data Preprocessing: The dataset is split into training and testing sets to ensure unbiased evaluation of the model’s performance.
-3. Modeling: Logistic Regression is applied to the training data to build the classification model.
-4. Evaluation: The model’s accuracy is assessed using the test data, and metrics such as accuracy score are calculated to measure its performance.
-**Results**
-The accuracy of the logistic regression model on this dataset is evaluated to ensure its reliability in distinguishing between malignant and benign tumors.
+import numpy as np
+import pandas as pd
+import sklearn.datasets
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+Data collection and Preprocessing
 
-**Technologies Used**
--Python
--NumPy
--Pandas
--Scikit-learn
+# loading the data from sklearn
+breast_cancer_dataset = sklearn.datasets.load_breast_cancer()
+print(breast_cancer_dataset)
 
-**How to Run the Code**
-Clone the repository.
-Install the necessary libraries using pip install -r requirements.txt.
-Run the Jupyter Notebook or Python script to execute the code.
-**Conclusion**
-This project demonstrates the use of logistic regression for binary classification, specifically in identifying breast cancer malignancy. Further enhancements can include testing different models or tuning hyperparameters to improve the performance.
+# loading the data to a data frame
+data_frame = pd.DataFrame(breast_cancer_dataset.data, columns = breast_cancer_dataset.feature_names)
+
+# print the first 5 rows of the dataframe
+data_frame.head()
+
+# adding the 'target' column to the data frame
+data_frame['label'] = breast_cancer_dataset.target
+
+# print last 5 rows of the dataframe
+data_frame.tail()
+
+# number of rows and columns in the dataset
+data_frame.shape
+(569, 31)
+
+# getting some information about the data
+data_frame.info()
+
+# checking for missing values
+data_frame.isnull().sum()
+
+# statistical measures about the data
+data_frame.describe()
+
+# checking the distribution of Target Varibale
+data_frame['label'].value_counts()
+
+1 -> Benign 0 -> Malignant
+
+data_frame.groupby('label').mean()
+
+X = data_frame.drop(columns='label', axis=1)
+Y = data_frame['label']
+
+print(X)
+print(Y)
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=2)
+
+print(X.shape, X_train.shape, X_test.shape)
+
+Model Training with Logistic Regression
+
+model = LogisticRegression()
+
+# training the Logistic Regression model using Training data
+
+model.fit(X_train, Y_train)
+
+Model Evaluation: Accuracy Score
+
+# accuracy on training data
+X_train_prediction = model.predict(X_train)
+training_data_accuracy = accuracy_score(Y_train, X_train_prediction)
+
+print('Accuracy on training data = ', training_data_accuracy)
+Accuracy on training data =  0.9472527472527472
+
+# accuracy on test data
+X_test_prediction = model.predict(X_test)
+test_data_accuracy = accuracy_score(Y_test, X_test_prediction)
+
+print('Accuracy on test data = ', test_data_accuracy)
+Accuracy on test data =  0.929824561403508
+
+# change the input data to a numpy array
+input_data_as_numpy_array = np.asarray(input_data)
+
+# reshape the numpy array as we are predicting for one datapoint
+input_data = (13.54,14.36,87.46,566.3,0.09779,0.08129,0.06664,0.04781,0.1885,0.05766,0.2699,0.7886,2.058,23.56,0.008462,0.0146,0.02387,0.01315,0.0198,0.0023,15.11,19.26,99.7,711.2,0.144,0.1773,0.239,0.1288,0.2977,0.07259)
+
+# change the input data to a numpy array
+input_data_as_numpy_array = np.asarray(input_data)
+
+# reshape the numpy array as we are predicting for one datapoint
+input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
+
+prediction = model.predict(input_data_reshaped)
+print(prediction)
+
+if (prediction[0] == 0):
+  print('The Breast cancer is Malignant')
+
+else:
+  print('The Breast Cancer is Benign')
